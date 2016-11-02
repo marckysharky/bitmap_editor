@@ -108,7 +108,7 @@ RSpec.describe BitmapEditor::Instructions do
       let(:input) { 'C 1 1' }
 
       before do
-        allow(image).to receive(:clear) { raise BitmapEditor::InputError, 'test-input-error' }
+        allow(image).to receive(:clear) { raise BitmapEditor::ArgumentError, 'test-input-error' }
       end
 
       it { is_expected.to eq(true) }

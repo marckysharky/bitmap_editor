@@ -1,4 +1,4 @@
-require 'bitmap_editor/input_error'
+require 'bitmap_editor/argument_error'
 
 class BitmapEditor
   class Image
@@ -58,14 +58,14 @@ class BitmapEditor
     end
 
     def check_canvas
-      raise InputError, 'Image requires creation' unless canvas
+      raise ArgumentError, 'Image requires creation' unless canvas
     end
 
     def validate_canvas_create(w, h)
       w, h = w.to_i, h.to_i
 
-      raise InputError, 'Image width invalid' unless valid_dimension?(w)
-      raise InputError, 'Image height invalid' unless valid_dimension?(h)
+      raise ArgumentError, 'Image width invalid' unless valid_dimension?(w)
+      raise ArgumentError, 'Image height invalid' unless valid_dimension?(h)
     end
 
     def valid_dimension?(n)
@@ -75,23 +75,24 @@ class BitmapEditor
     def check_x_coordinate(*ns)
       Array(ns).each do |n|
         i = n.to_i
-        raise InputError, 'Coordinate invalid' if i < 1
-        raise InputError, 'Coordinate invalid' if i > canvas[0].size
+        raise ArgumentError, 'Coordinate invalid' if i < 1
+        raise ArgumentError, 'Coordinate invalid' if i > canvas[0].size
       end
     end
 
     def check_y_coordinate(*ns)
       Array(ns).each do |n|
         i = n.to_i
-        raise InputError, 'Coordinate invalid' if i < 1
-        raise InputError, 'Coordinate invalid' if i > canvas.size
+        raise ArgumentError, 'Coordinate invalid' if i < 1
+        raise ArgumentError, 'Coordinate invalid' if i > canvas.size
       end
     end
 
     def check_colour(c)
       s = c.to_s.codepoints
-      raise InputError, 'Colour invalid' unless s.size == 1
-      raise InputError, 'Colour invalid' unless s.first >= 65 && s.first <= 90
+      raise ArgumentError, 'Colour invalid' unless s.size == 1
+      raise ArgumentError, 'Colour invalid' unless s.first >= 65 && s.first <= 90
+    end
     end
   end
 end
