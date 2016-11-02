@@ -1,3 +1,4 @@
-require './app/bitmap_editor'
+$LOAD_PATH.unshift File.expand_path('./lib', __dir__)
+require 'bitmap_editor'
 
-BitmapEditor.new.run
+BitmapEditor.new(args: ARGV, output: STDOUT).run!
