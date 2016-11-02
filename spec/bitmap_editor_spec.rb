@@ -1,50 +1,26 @@
 require 'bitmap_editor'
 
-describe BitmapEditor do
-  let(:default_args) { %w(--no-interaction) }
+RSpec.describe BitmapEditor do
+  let(:args)   { double }
+  let(:output) { double }
 
-  subject(:editor) { described_class.new }
+  subject(:editor) do
+    described_class.new(args: args, output: output)
+  end
 
-  describe '.run!' do
-    let(:output) { StringIO.new }
+  describe '#run!' do
+    subject { editor.run! }
 
-    subject { described_class.run!(args: runtime_args, output: output) }
-
-    context 'help' do
-      let(:runtime_args) { %w(help) + default_args }
-
-      it 'shows help' do
-        subject
-        expect(output.string).to include('Usage: bitmap_editor help|start')
-      end
-
-      it 'shows instructions' do
-        subject
-        expect(output.string).to include('Instructions:')
-      end
+    it do
+      expect(editor.cli).to receive(:call)
+      subject
     end
 
     context 'start' do
-      let(:runtime_args) { %w(start) + default_args }
-
-      it 'starts' do
+      it do
+        allow(editor.cli).to receive(:call) { true }
+        expect(editor.interaction).to receive(:call)
         subject
-        expect(output.string).to include('Starting')
-      end
-
-      context 'with instructions' do
-        let(:runtime_args) do
-          ['start', '--instruction=X', '--instruction=Y', '--instruction=Z'] + default_args
-        end
-
-        it 'performs instructions' do
-          instructions = []
-          described_class.run!(args: runtime_args, output: output) do |i|
-            instructions.push(i)
-          end
-
-          expect(instructions).to eq(%w(X Y Z))
-        end
       end
     end
   end
