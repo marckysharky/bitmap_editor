@@ -24,54 +24,25 @@ class BitmapEditor
       @output = output
     end
 
-    def create(image, input)
-      image.create(*input)
-      true
-    end
-
-    def clear(image, _input)
-      image.clear
-      true
-    end
-
-    def fill(image, input)
-      image.fill(*input)
-      true
-    end
-
-    def vertical(image, input)
-      image.vertical(*input)
-      true
-    end
-
-    def horizontal(image, input)
-      image.horizontal(*input)
-      true
-    end
-
-    def show(image, _input)
-      output.print image
-      true
-    end
-
-    def error(e)
-      output.print "#{e.message}\n"
-    end
-
-    def help(_image, _input)
+    def help(image, *_input)
       output.print instructions.join("\n") << "\n"
       true
     end
 
-    def quit(_image, input)
-      output.print "\n" unless input
-      output.print "Goodbye!\n"
-      false
+    def show(image, *_input)
+      output.print image.to_s
+      true
     end
 
     def not_implemented
       output.print "I'm sorry, I did not recognise the command\n"
       true
+    end
+
+    def quit(image, *input)
+      output.print "\n" unless input
+      output.print "Goodbye!\n"
+      false
     end
 
     def call(i, image)
@@ -83,10 +54,20 @@ class BitmapEditor
 
       return not_implemented unless action
 
-      send(action, image, input[1..-1])
-    rescue BitmapEditor::InputError => e
+      perform(action, image, input[1..-1])
+    end
+
+    def perform(action, image, input)
+      return self.method(action).call(image, input) if self.respond_to?(action)
+      image.method(action).call(*input)
+      true
+    rescue BitmapEditor::ArgumentError => e
       error e
       true
+    end
+
+    def error(e)
+      output.print "#{e.message}\n"
     end
 
     def action_for(a)

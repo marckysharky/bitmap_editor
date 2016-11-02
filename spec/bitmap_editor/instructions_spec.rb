@@ -2,14 +2,16 @@ require 'bitmap_editor/instructions'
 
 RSpec.describe BitmapEditor::Instructions do
   let(:output) { StringIO.new }
-  let(:image)  { double(:image) }
+  let(:image)  { BitmapEditor::Image.new }
 
   subject(:instruction) do
     described_class.new(output: output)
   end
 
   describe '#call' do
-    subject { instruction.call(input, image) }
+    subject do
+      instruction.tap { |i| i.call(input, image) }
+    end
 
     context 'I' do
       let(:input) { 'I x y' }
@@ -17,6 +19,11 @@ RSpec.describe BitmapEditor::Instructions do
       it do
         expect(image).to receive(:create).with('x', 'y')
         subject
+      end
+
+      context 'invalid input' do
+        let(:input) { 'I x' }
+        it_behaves_like 'error output'
       end
     end
 
@@ -36,6 +43,11 @@ RSpec.describe BitmapEditor::Instructions do
         expect(image).to receive(:fill).with('a', 'b', 'c')
         subject
       end
+
+      context 'invalid input' do
+        let(:input) { 'L a b' }
+        it_behaves_like 'error output'
+      end
     end
 
     context 'V' do
@@ -45,6 +57,11 @@ RSpec.describe BitmapEditor::Instructions do
         expect(image).to receive(:vertical).with('a', 'b', 'c', 'd')
         subject
       end
+
+      context 'invalid input' do
+        let(:input) { 'V a b' }
+        it_behaves_like 'error output'
+      end
     end
 
     context 'H' do
@@ -53,6 +70,11 @@ RSpec.describe BitmapEditor::Instructions do
       it do
         expect(image).to receive(:horizontal).with('a', 'b', 'c', 'd')
         subject
+      end
+
+      context 'invalid input' do
+        let(:input) { 'H a b' }
+        it_behaves_like 'error output'
       end
     end
 
@@ -67,8 +89,6 @@ RSpec.describe BitmapEditor::Instructions do
 
     context '?' do
       let(:input) { '?' }
-
-      it { is_expected.to eq(true) }
 
       it do
         subject
@@ -85,8 +105,6 @@ RSpec.describe BitmapEditor::Instructions do
     context 'X' do
       let(:input) { 'X' }
 
-      it { is_expected.to eq(false) }
-
       it do
         subject
         expect(output.string).to eq("Goodbye!\n")
@@ -96,26 +114,9 @@ RSpec.describe BitmapEditor::Instructions do
     context '-' do
       let(:input) { '-' }
 
-      it { is_expected.to eq(true) }
-
       it do
         subject
         expect(output.string).to eq("I'm sorry, I did not recognise the command\n")
-      end
-    end
-
-    context 'input error' do
-      let(:input) { 'C 1 1' }
-
-      before do
-        allow(image).to receive(:clear) { raise BitmapEditor::ArgumentError, 'test-input-error' }
-      end
-
-      it { is_expected.to eq(true) }
-
-      it do
-        subject
-        expect(output.string).to include('test-input-error')
       end
     end
   end
