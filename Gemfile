@@ -1,4 +1,8 @@
 source 'https://rubygems.org'
 
 ruby '2.3.1'
-gem 'rspec'
+
+group :development, :test do
+  gem 'rspec'
+  gem 'simplecov', require: false
+end
