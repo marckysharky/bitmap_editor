@@ -1,36 +1,34 @@
-class BitmapEditor
+require 'bitmap_editor/cli'
+require 'bitmap_editor/image'
+require 'bitmap_editor/instructions'
+require 'bitmap_editor/interaction'
 
-  def run
-    @running = true
-    puts 'type ? for help'
-    while @running
-      print '> '
-      input = gets.chomp
-      case input
-        when '?'
-          show_help
-        when 'X'
-          exit_console
-        else
-          puts 'unrecognised command :('
-      end
-    end
+class BitmapEditor
+  attr_reader :args, :output
+
+  def initialize(args: , output: )
+    @args   = args
+    @output = output
   end
 
-  private
-    def exit_console
-      puts 'goodbye!'
-      @running = false
-    end
+  def cli
+    @cli ||= Cli.new(args: args, output: output)
+  end
 
-    def show_help
-      puts "? - Help
-I M N - Create a new M x N image with all pixels coloured white (O).
-C - Clears the table, setting all pixels to white (O).
-L X Y C - Colours the pixel (X,Y) with colour C.
-V X Y1 Y2 C - Draw a vertical segment of colour C in column X between rows Y1 and Y2 (inclusive).
-H X1 X2 Y C - Draw a horizontal segment of colour C in row Y between columns X1 and X2 (inclusive).
-S - Show the contents of the current image
-X - Terminate the session"
-    end
+  def instructions
+    @instructions ||= Instructions.new(output: output)
+  end
+
+  def image
+    @image ||= Image.new
+  end
+
+  def interaction
+    @interaction ||= Interaction.new(cli: cli, instructions: instructions, image: image)
+  end
+
+  def run!
+    return unless cli.call
+    interaction.call
+  end
 end
