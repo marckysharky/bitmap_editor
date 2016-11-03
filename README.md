@@ -1,4 +1,4 @@
-# BitMap Editor
+# Bitmap Editor
 
 ## Running
 ```bash
@@ -34,7 +34,17 @@ OO
 Goodbye!
 ```
 
+Replay the example:
+```bash
+./bin/bitmap_editor start -i "I 5 6" -i "L 2 3 A" -i "S" -i "V 2 3 6 W" -i "H 3 5 2 Z" -i "S"
+```
+
 ## Testing
 ```bash
 bundle install && rspec
 ```
+
+## Notes
+- `BitmapEditor::Image` Class is large, any maybe not readable enough
+- `BitmapEditor::Instructions#perform` is maybe too complicated
+- Did not apply `rubocop` to the project - should have
