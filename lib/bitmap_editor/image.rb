@@ -30,13 +30,29 @@ class BitmapEditor
     def vertical(*args)
       x, y1, y2, c = validate_args(args, size: 4)
 
-      (y1..y2).to_a.each { |y| fill(x, y, c) }
+      (y1..y2).to_a.each do |y|
+        block_given? ? yield(x, y, c) : fill(x, y, c)
+      end
     end
 
     def horizontal(*args)
       x1, x2, y, c = validate_args(args, size: 4)
 
-      (x1..x2).to_a.each { |x| fill(x, y, c) }
+      (x1..x2).to_a.each do |x|
+        block_given? ? yield(x, y, c) : fill(x, y, c)
+      end
+    end
+
+    def flood(*args)
+      a, b, c = validate_args(args, size: 3)
+      a, b = a.to_i, b.to_i
+
+      check_colour(c)
+      check_canvas
+      check_x_coordinate(a)
+      check_y_coordinate(b)
+
+      flood_fill(a, b, fetch(a, b), c)
     end
 
     def to_s
@@ -48,6 +64,24 @@ class BitmapEditor
     end
 
     private
+
+    def flood_fill(x, y, _c, c)
+      check_x_coordinate(x)
+      check_y_coordinate(y)
+
+      return false unless fetch(x, y) == _c
+
+      fill(x, y, c)
+
+      flood_fill(x - 1, y, _c, c)
+      flood_fill(x + 1, y, _c, c)
+      flood_fill(x, y - 1, _c, c)
+      flood_fill(x, y + 1, _c, c)
+
+      true
+    rescue BitmapEditor::ArgumentError
+      false
+    end
 
     def get(*args)
       x, y = validate_args(args, size: 2)
