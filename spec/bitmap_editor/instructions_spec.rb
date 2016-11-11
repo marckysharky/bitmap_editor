@@ -87,6 +87,15 @@ RSpec.describe BitmapEditor::Instructions do
       end
     end
 
+    context 'F' do
+      let(:input) { 'F' }
+
+      it do
+        expect(image).to receive(:flood)
+        subject
+      end
+    end
+
     context '?' do
       let(:input) { '?' }
 

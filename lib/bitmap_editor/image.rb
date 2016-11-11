@@ -39,6 +39,9 @@ class BitmapEditor
       (x1..x2).to_a.each { |x| fill(x, y, c) }
     end
 
+    def flood(*args)
+    end
+
     def to_s
       return unless canvas
       canvas.each_with_object('') do |row, s|

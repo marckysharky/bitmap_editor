@@ -11,6 +11,8 @@ class BitmapEditor
                help: "%s X Y1 Y2 C - Draw a vertical segment of colour C in column X between rows Y1 and Y2 (inclusive)"  },
       'H' => { action: :horizontal,
                help: "%s X1 X2 Y C - Draw a horizontal segment of colour C in row Y between columns X1 and X2 (inclusive)"  },
+      'F' => { action: :flood,
+               help: "%s - X Y C - Flood fill pixel at X,Y with color C"  },
       'S' => { action: :show,
                help: "%s - Show the contents of the current image"  },
       '?' => { action: :help },
